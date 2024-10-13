@@ -93,3 +93,110 @@ webpack-demo
 |- /node_modules
 ```
 
+### **Asset Management**
+
+So far, we have bundled a simple JavaScript file, but a project can contain assets other than JavaScript, such as CSS, images, and fonts. Webpack helps manage these assets effectively.
+
+1. **Understanding Asset Management**
+   - By default, Webpack only bundles JavaScript and JSON files without any additional configuration.
+   - To bundle other types of files, we need to use **loaders**. Loaders enable Webpack to process and bundle non-JavaScript files, converting them into valid modules that can be used within your application.
+
+2. **Bundling CSS Files**
+   - To include CSS in your bundled output, you need to use `css-loader` and `style-loader`.
+   - **css-loader**: Allows Webpack to process `@import` and `url()` in CSS files, resolving them as dependencies.
+   - **style-loader**: Injects CSS into the DOM.
+   - To set up CSS bundling, first install the necessary loaders:
+     ```
+     npm install css-loader style-loader --save-dev
+     ```
+   - Update `webpack.config.js` to include CSS handling:
+     ```js
+     module.exports = {
+       module: {
+         rules: [
+           {
+             test: /\.css$/i,
+             use: ['style-loader', 'css-loader'],
+           },
+         ],
+       },
+     };
+     ```
+   - Now, you can import a CSS file in your JavaScript:
+     ```js
+     import './style.css';
+     ```
+
+3. **Handling Images and Fonts**
+   - **Asset Modules**: Webpack's **Asset Modules** are built-in modules that can handle images, fonts, and other assets.
+   - To load images, you can use the asset/resource module, which copies the file to the `dist` folder and includes the URL in your bundled output.
+   - Example configuration for images:
+     ```js
+     module.exports = {
+       module: {
+         rules: [
+           {
+             test: /\.(png|svg|jpg|jpeg|gif)$/i,
+             type: 'asset/resource',
+           },
+         ],
+       },
+     };
+     ```
+   - This ensures that images referenced in your CSS or JavaScript are bundled correctly.
+   - Similarly, fonts can also be handled using `asset/resource`:
+     ```js
+     module.exports = {
+       module: {
+         rules: [
+           {
+             test: /\.(woff|woff2|eot|ttf|otf)$/i,
+             type: 'asset/resource',
+           },
+         ],
+       },
+     };
+     ```
+
+4. **Loading Other Data Files**
+   - Webpack can also be configured to load other types of data, such as CSV, XML, YAML, JSON5, and TOML files.
+   - Install the necessary loaders:
+     ```
+     npm install csv-loader xml-loader yaml-loader json5-loader toml-loader --save-dev
+     ```
+   - Update `webpack.config.js` to include CSV, XML, YAML, JSON5, and TOML file handling:
+     ```js
+     module.exports = {
+       module: {
+         rules: [
+           {
+             test: /\.(csv|tsv)$/i,
+             use: ['csv-loader'],
+           },
+           {
+             test: /\.xml$/i,
+             use: ['xml-loader'],
+           },
+           {
+             test: /\.ya?ml$/i,
+             use: ['yaml-loader'],
+           },
+           {
+             test: /\.json5$/i,
+             type: 'json',
+             parser: {
+               parse: require('json5').parse,
+             },
+           },
+           {
+             test: /\.toml$/i,
+             type: 'json',
+             parser: {
+               parse: require('toml').parse,
+             },
+           },
+         ],
+       },
+     };
+     ```
+   - This allows you to import and work with CSV, XML, YAML, JSON5, and TOML data within your JavaScript files.
