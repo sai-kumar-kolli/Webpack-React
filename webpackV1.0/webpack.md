@@ -11,7 +11,7 @@
 
 2. **Install Webpack**
 
-   - Install Webpack and its CLI tool by running: 
+   - Install Webpack and its CLI tool by running:
      ```
      npm install webpack webpack-cli --save-dev
      ```
@@ -28,8 +28,8 @@
    - In `index.js`, create a `div` element and append it to the DOM using the code:
      ```js
      function component() {
-       const element = document.createElement('div');
-       element.innerHTML = _.join(['Hello', 'Webpack'], ' ');
+       const element = document.createElement("div");
+       element.innerHTML = _.join(["Hello", "Webpack"], " ");
        return element;
      }
      document.body.appendChild(component());
@@ -42,16 +42,18 @@
      npm install lodash
      ```
    - Update `index.js` to import Lodash directly:
+
      ```js
-     import _ from 'lodash';
+     import _ from "lodash";
 
      function component() {
-       const element = document.createElement('div');
-       element.innerHTML = _.join(['Hello', 'Webpack'], ' ');
+       const element = document.createElement("div");
+       element.innerHTML = _.join(["Hello", "Webpack"], " ");
        return element;
      }
      document.body.appendChild(component());
      ```
+
    - Remove the `<script>` tag for Lodash from `index.html`, as Lodash will now be bundled by Webpack.
 
 6. **Output to Distribution Folder**
@@ -70,6 +72,7 @@
      npx webpack
      ```
    - Since we have a Webpack configuration file (`webpack.config.js`), we can also run the build using:
+
      ```
      npx webpack --config webpack.config.js
      ```
@@ -98,10 +101,12 @@ webpack-demo
 So far, we have bundled a simple JavaScript file, but a project can contain assets other than JavaScript, such as CSS, images, and fonts. Webpack helps manage these assets effectively.
 
 1. **Understanding Asset Management**
+
    - By default, Webpack only bundles JavaScript and JSON files without any additional configuration.
    - To bundle other types of files, we need to use **loaders**. Loaders enable Webpack to process and bundle non-JavaScript files, converting them into valid modules that can be used within your application.
 
 2. **Bundling CSS Files**
+
    - To include CSS in your bundled output, you need to use `css-loader` and `style-loader`.
    - **css-loader**: Allows Webpack to process `@import` and `url()` in CSS files, resolving them as dependencies.
    - **style-loader**: Injects CSS into the DOM.
@@ -116,7 +121,7 @@ So far, we have bundled a simple JavaScript file, but a project can contain asse
          rules: [
            {
              test: /\.css$/i,
-             use: ['style-loader', 'css-loader'],
+             use: ["style-loader", "css-loader"],
            },
          ],
        },
@@ -124,10 +129,11 @@ So far, we have bundled a simple JavaScript file, but a project can contain asse
      ```
    - Now, you can import a CSS file in your JavaScript:
      ```js
-     import './style.css';
+     import "./style.css";
      ```
 
 3. **Handling Images and Fonts**
+
    - **Asset Modules**: Webpack's **Asset Modules** are built-in modules that can handle images, fonts, and other assets.
    - To load images, you can use the asset/resource module, which copies the file to the `dist` folder and includes the URL in your bundled output.
    - Example configuration for images:
@@ -137,7 +143,7 @@ So far, we have bundled a simple JavaScript file, but a project can contain asse
          rules: [
            {
              test: /\.(png|svg|jpg|jpeg|gif)$/i,
-             type: 'asset/resource',
+             type: "asset/resource",
            },
          ],
        },
@@ -151,7 +157,7 @@ So far, we have bundled a simple JavaScript file, but a project can contain asse
          rules: [
            {
              test: /\.(woff|woff2|eot|ttf|otf)$/i,
-             type: 'asset/resource',
+             type: "asset/resource",
            },
          ],
        },
@@ -171,28 +177,28 @@ So far, we have bundled a simple JavaScript file, but a project can contain asse
          rules: [
            {
              test: /\.(csv|tsv)$/i,
-             use: ['csv-loader'],
+             use: ["csv-loader"],
            },
            {
              test: /\.xml$/i,
-             use: ['xml-loader'],
+             use: ["xml-loader"],
            },
            {
              test: /\.ya?ml$/i,
-             use: ['yaml-loader'],
+             use: ["yaml-loader"],
            },
            {
              test: /\.json5$/i,
-             type: 'json',
+             type: "json",
              parser: {
-               parse: require('json5').parse,
+               parse: require("json5").parse,
              },
            },
            {
              test: /\.toml$/i,
-             type: 'json',
+             type: "json",
              parser: {
-               parse: require('toml').parse,
+               parse: require("toml").parse,
              },
            },
          ],
@@ -200,3 +206,44 @@ So far, we have bundled a simple JavaScript file, but a project can contain asse
      };
      ```
    - This allows you to import and work with CSV, XML, YAML, JSON5, and TOML data within your JavaScript files.
+
+### **Output Management**
+
+1. **Improving Output Management**
+
+   - So far, we have manually edited or added the files into `index.html`. However, Webpack can automate this process by using plugins.
+   - To simplify managing the HTML file, we can use the `html-webpack-plugin` to automatically generate an `index.html` that includes references to the bundled output.
+
+2. **Installing HTMLWebpackPlugin**
+
+   - Install the HTML Webpack Plugin by running:
+     ```
+     npm install html-webpack-plugin --save-dev
+     ```
+   - Update `webpack.config.js` to include the plugin:
+
+     ```js
+     const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+     module.exports = {
+       entry: './src/index.js',
+       output: {
+         filename: 'main.js',
+         path: path.resolve(__dirname, 'dist'),
+         clean: true, // Automatically clean the /dist folder before each build
+       },
+       plugins: [
+         new HtmlWebpackPlugin({
+           title: 'Webpack Demo',
+           template: './src/index.html', // Use a template if needed
+         }),
+       ],
+       module: {
+         ...
+       },
+     };
+     ```
+
+3. **Cleaning the Output Folder**
+   - With the `clean` option enabled in the output configuration, Webpack will automatically clean the `dist` folder before each build, ensuring that old files are removed.
+   - This keeps the `dist` folder clean and makes sure that only the latest build files are present.
